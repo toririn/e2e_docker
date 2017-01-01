@@ -2,10 +2,11 @@ require 'turnip'
 require 'turnip/capybara'
 require 'turnip/rspec'
 require 'capybara'
+require 'pry'
 
 #各種driverの設定
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, :browser => :chrome, :url => "http://localhost:#{ENV['SELENIUM_HUB_PORT']}/wd/hub")
+  Capybara::Selenium::Driver.new(app, browser: :remote, url: "http://#{ENV['SELENIUM_HOST']}:#{ENV['SELENIUM_PORT']}/wd/hub")
 end
 
 Capybara.configure do |config|

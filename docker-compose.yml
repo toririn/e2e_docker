@@ -1,29 +1,41 @@
 version: '2.0'
 services:
-  ruby:
-    restart: always
-    image: ruby:2.4
-    env_file: ./ruby/config/.env
-    container_name: ruby
-    volumes:
-      - "$PWD"/ruby:/usr/src/app
+
+  # for e2e selenium
   selenium:
-    restart: always
     image: selenium/standalone-firefox-debug:3.0.1
-    env_file:
     container_name: selenium
-    ports:
-      - "15900:5900"
-    volume_from:
-      - ruby
-  jenkins:
     restart: always
+    ports:
+      - 15900:5900 #VNC
+      - 4444:4444 #VNC
+    expose:
+      - 4444 #selenium
+    volumes:
+      - ./ruby/download:/home/seluser # for download file
+
+  # for scripts
+  ruby:
+    image: ruby:2.4
+    container_name: ruby
+    restart: always
+    links:
+      - selenium
+    volumes:
+      - ./ruby:/usr/src/app
+    command: tail -f /dev/null
+    environment:
+      - SELENIUM_HOST=selenium
+      - SELENIUM_PORT=4444
+
+  # for execute tool
+  jenkins:
     image: jenkins:2.32.1
-    env_file:
     container_name: jenkins
+    restart: always
     ports:
       - "18080:8080"
     volumes:
-      - "$PWD"/jenkins:/var/jenkins_home
-    links:
+      - ./jenkins:/var/jenkins_home
+    volumes_from:
       - ruby
