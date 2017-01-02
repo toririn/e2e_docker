@@ -16,10 +16,10 @@ curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compos
 
 ### Deploy
 
-* fix `set_env.sh` your environment
+* fix `ruby/set_env.sh` your environment
   * (It can be used without changing)
 
-* input cli
+* input command line
 
 ```
 bash deploy.sh
@@ -28,7 +28,7 @@ bash deploy.sh
 * or deploy command yourself
 
 ```
-bash set_env.sh
+bash ruby/set_env.sh
 sudo docker-compose up -d
 ```
 
@@ -64,19 +64,48 @@ docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 * create first admin user
   * input `user_id` and `password`
 
-* push jenkins start button
+* push `start using jenkins` button
 
-### job setting
-
-* install for SSH　PULUGIN
+### job setting(exsample)
 
 * build scripts setting
 
 **ssh shell**
 
 ```
-cd /usr/src/app
-bundle install
-bundle exec rspec spec/features/tests/test.feature
+sshpass -p ${DOCKER_PASSWORD} ssh root@ruby "cd /usr/src/app && bundle && bundle exec rspec spec/features/tests/test.feature"
 ```
 
+### ssh login only once for command line
+
+```
+docker exec -it jenkins /bin/bash
+# for docker jenkins
+ssh root@ruby
+#=> yes
+
+exit
+```
+
+### Job start
+
+* push job for jenkins
+  * result exsample
+
+```
+
+サンプル
+  googleで検索ができること
+    * googleを訪問 -> * googleのページが表示されている -> * 「長谷川豊」で検索する -> * 処理を待つ -> * 検索結果のページが表示されている
+
+Top 1 slowest examples (26.27 seconds, 100.0% of total time):
+  サンプル googleで検索ができること * googleを訪問 -> * googleのページが表示されている -> * 「長谷川豊」で検索する -> * 処理を待つ -> * 検索結果のページが表示されている
+    26.27 seconds ./spec/features/tests/test.feature:5
+
+Finished in 26.28 seconds (files took 0.81951 seconds to load)
+1 example, 0 failures
+
+Randomized with seed 53862
+
+Finished: SUCCESS
+```

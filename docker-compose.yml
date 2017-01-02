@@ -15,7 +15,11 @@ services:
 
   # for scripts
   ruby:
-    build: .
+    build:
+      context: ./ruby
+      dockerfile: Dockerfile
+      args:
+        - password=${DOCKER_PASSWORD}
     container_name: ruby
     restart: always
     depends_on:
@@ -28,12 +32,15 @@ services:
 
   # for execute tool
   jenkins:
-    image: jenkins:2.32.1
+    build: ./jenkins/
     container_name: jenkins
     restart: always
     ports:
       - "18080:8080"
+      - "50000:50000"
     volumes:
       - ./jenkins:/var/jenkins_home
     volumes_from:
       - ruby
+    environment:
+      - DOCKER_PASSWORD=${DOCKER_PASSWORD}
